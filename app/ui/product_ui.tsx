@@ -60,7 +60,7 @@ export default function Product({
               <button
                 type='button'
                 className='h-8 px-2 text-sm rounded-md bg-red-700 text-white min-w-[100px]'
-                onClick={(e) => handleDeleteProduct(products.product_id)}
+                onClick={() => handleDeleteProduct(products.product_id)}
                 >
                 Delete
               </button>
