@@ -1,9 +1,23 @@
+import { fetchProducts, fetchSearchProduct } from "@/app/seed/data";
 import { CreateProduct } from "../../ui/crud_button";
 import Product from "../../ui/product_ui";
 import Search from "../../ui/search";
-import { listProducts } from "./mock_data";
+// import { listProducts } from "./mock_data";
 
-export default function Homepage() {
+export default async function Productpage(props: {
+  searchParams?: Promise<{
+    query?: string;}>;
+}) {
+    // const products = await fetchProducts();
+    const searchParams = await props.searchParams;
+    const query = searchParams?.query;
+
+    let products = await fetchProducts();
+    console.log(products)
+    if (query) {
+       products = await fetchSearchProduct(query);
+
+    }   
     return (
       <div className="w-full h-5/6">
         <div className="flex w-full items-center justify-between">
@@ -14,7 +28,7 @@ export default function Homepage() {
           <CreateProduct/>
         </div>
         <div className="w-full h-full overflow-y-auto grid grid grid-cols-3 gap-10 my-10">
-          {listProducts.map((product, index) => <Product key={index} products={product}/> )}
+          {products.map((product) => <Product key={product.product_id} products={product}/> )}
         </div>
       </div>
     );

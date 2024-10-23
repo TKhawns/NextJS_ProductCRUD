@@ -2,10 +2,11 @@ import {DocumentChartBarIcon, GlobeAltIcon, Square2StackIcon, WalletIcon } from 
 import Link from "next/link";
 import { Button } from "./button";
 import { FormattedProduct } from "../lib/mapping";
+import { createProduct } from "../lib/action";
 
 export default function Form({isEdit, product} : {isEdit: boolean, product: FormattedProduct | string}) {
   return (
-    <form>
+    <form action={createProduct}>
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
         <div className="mb-4">
           <label htmlFor="product" className="mb-2 block text-sm font-medium">
@@ -72,7 +73,7 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
             <div className="relative">
               <input
                 id="imageUrl"
-                name="imageUrl"
+                name="image_url"
                 type="text"
                 placeholder="Enter image url"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
