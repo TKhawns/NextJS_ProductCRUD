@@ -19,7 +19,7 @@ export default function LoginPage() {
                         placeholder="Password"
                     />
                     <div className="content-start text-sm">Forgot your password?</div>
-                    <Link className= 'text-center flex h-10 w-2/3 items-center justify-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50' href={"/home"}>Login</Link>
+                    <Link className= "text-center flex h-10 w-2/3 items-center justify-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50" href={"/home"}>Login</Link>
                     <div className="content-start text-sm flex flex-row gap-6">
                         <div>Don't have an account?</div>
                         <Link href={"/"} className="text-red-500">Signup</Link>

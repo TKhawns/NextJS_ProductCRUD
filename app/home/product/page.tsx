@@ -14,7 +14,7 @@ export default function Homepage() {
           <CreateProduct/>
         </div>
         <div className="w-full h-full overflow-y-auto grid grid grid-cols-3 gap-10 my-10">
-          {listProducts.map((product) => <Product products={product}/> )}
+          {listProducts.map((product, index) => <Product key={index} products={product}/> )}
         </div>
       </div>
     );

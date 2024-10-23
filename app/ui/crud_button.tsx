@@ -1,7 +1,5 @@
 import { PencilIcon, PlusIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { FormattedProduct } from '../lib/mapping';
-import DeleteModal from './delete_modal';
 
 export function CreateProduct() {
   return (
