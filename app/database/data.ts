@@ -4,6 +4,7 @@ import { Product } from "./model";
 export async function fetchProducts() {
     try {
       const data = await sql<Product>`SELECT * FROM products;`;
+      console.log(data);
       return data.rows;
       
 

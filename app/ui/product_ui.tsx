@@ -3,6 +3,7 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { FormattedProduct } from "../lib/mapping";
 import { EditProduct } from "./crud_button";
 import { useState } from "react";
+import { deleteProduct } from "../lib/action";
 
 export default function Product({
     products,
@@ -12,7 +13,11 @@ export default function Product({
 
     const [openModal, setModal] = useState(false);
     const handleModal = () => {
-      setModal(!openModal)
+      setModal(true);
+    }
+    const handleDeleteProduct = async (product_id: string) => {
+      await deleteProduct(product_id);
+      setModal(false)
     }
 
     return (
@@ -27,7 +32,7 @@ export default function Product({
                 </div>
             </div>
             <div className="text-gray font-bold px-5">Summary</div>
-            <div className="text-gray font-normal px-5">{products.description}</div>
+            <div className="text-gray grow font-normal px-5">{products.description}</div>
                 <div className="flex flex-row w-full justify-center items-center gap-10 py-5">
                     <EditProduct id={products.product_id}/>
                     <button onClick={handleModal}  className="rounded-md border p-2 hover:bg-sky-100">
@@ -55,7 +60,7 @@ export default function Product({
               <button
                 type='button'
                 className='h-8 px-2 text-sm rounded-md bg-red-700 text-white min-w-[100px]'
-                onClick={handleModal}
+                onClick={(e) => handleDeleteProduct(products.product_id)}
                 >
                 Delete
               </button>

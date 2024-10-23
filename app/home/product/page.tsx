@@ -1,4 +1,4 @@
-import { fetchProducts, fetchSearchProduct } from "@/app/seed/data";
+import { fetchProducts, fetchSearchProduct } from "@/app/database/data";
 import { CreateProduct } from "../../ui/crud_button";
 import Product from "../../ui/product_ui";
 import Search from "../../ui/search";
@@ -8,11 +8,11 @@ export default async function Productpage(props: {
   searchParams?: Promise<{
     query?: string;}>;
 }) {
-    // const products = await fetchProducts();
+
     const searchParams = await props.searchParams;
     const query = searchParams?.query;
 
-    let products = await fetchProducts();
+    let products = await fetchProducts() ;
     console.log(products)
     if (query) {
        products = await fetchSearchProduct(query);

@@ -2,12 +2,13 @@ import {DocumentChartBarIcon, GlobeAltIcon, Square2StackIcon, WalletIcon } from 
 import Link from "next/link";
 import { Button } from "./button";
 import { FormattedProduct } from "../lib/mapping";
-import { createProduct } from "../lib/action";
+import { createProduct, updateProduct } from "../lib/action";
 
 export default function Form({isEdit, product} : {isEdit: boolean, product: FormattedProduct | string}) {
   return (
-    <form action={createProduct}>
+    <form action={ isEdit ? updateProduct : createProduct}>
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
+        <input className="hidden" name="product_id" type="text" defaultValue={typeof product === "string" ? "" : product.product_id}></input>
         <div className="mb-4">
           <label htmlFor="product" className="mb-2 block text-sm font-medium">
             Product name

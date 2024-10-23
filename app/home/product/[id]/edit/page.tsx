@@ -1,4 +1,4 @@
-import { fetchProducts } from "@/app/seed/data";
+import { fetchProducts } from "@/app/database/data";
 import Form from "../../../../ui/create_form";
 
 export default async function EditPage(props: { params: Promise<{ id: string }> }) {
