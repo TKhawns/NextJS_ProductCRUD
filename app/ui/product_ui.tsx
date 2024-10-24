@@ -4,6 +4,7 @@ import { FormattedProduct } from "../lib/mapping";
 import { EditProduct } from "./crud_button";
 import { useState } from "react";
 import { deleteProduct } from "../lib/action";
+import Circleloading from "./circle_loading";
 
 export default function Product({
     products,
@@ -12,11 +13,14 @@ export default function Product({
   }) {
 
     const [openModal, setModal] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const handleModal = () => {
-      setModal(true);
+      setModal(!openModal);
     }
     const handleDeleteProduct = async (product_id: string) => {
+      setIsLoading(true);
       await deleteProduct(product_id);
+      setIsLoading(false);
       setModal(false)
     }
 
@@ -40,7 +44,6 @@ export default function Product({
                         <TrashIcon className="w-6" />
                     </button>
                 </div>
-
                 {openModal &&
         <div className='fixed top-0 left-0 w-full h-full bg-gray-600 bg-opacity-25 flex justify-center items-center'>
           <div className='min-w-[460px] bg-white py-4 rounded-xl'>
@@ -66,6 +69,10 @@ export default function Product({
               </button>
             </div>
           </div>
+          {isLoading && <div className='fixed top-0 left-0 w-full h-full bg-gray-600 bg-opacity-25 flex justify-center items-center'>
+            <Circleloading/>
+            </div>
+          }
         </div>
       }
         </div>

@@ -1,12 +1,36 @@
+"use client";
 import {DocumentChartBarIcon, GlobeAltIcon, Square2StackIcon, WalletIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Button } from "./button";
 import { FormattedProduct } from "../lib/mapping";
 import { createProduct, updateProduct } from "../lib/action";
+import { useState } from "react";
+import Circleloading from "./circle_loading";
 
 export default function Form({isEdit, product} : {isEdit: boolean, product: FormattedProduct | string}) {
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true); // Bắt đầu loading khi submit form
+
+    const formData = new FormData(e.target as HTMLFormElement);
+
+    try {
+      if (isEdit) {
+        await updateProduct(formData); // Gọi hàm updateProduct khi isEdit là true
+      } else {
+        await createProduct(formData); // Gọi hàm createProduct khi isEdit là false
+      }
+    } catch (error) {
+      console.error("Error during product operation:", error);
+    } finally {
+      setLoading(false); // Kết thúc loading sau khi thực hiện xong
+    }
+  };
+
   return (
-    <form action={ isEdit ? updateProduct : createProduct}>
+    <form onSubmit={handleSubmit}>
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
         <input className="hidden" name="product_id" type="text" defaultValue={typeof product === "string" ? "" : product.product_id}></input>
         <div className="mb-4">
@@ -96,6 +120,10 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
         <Button type="submit">
             {isEdit ? <>Edit product</> : <>Create product</>} </Button>
       </div>
+      {loading && <div className='fixed top-0 left-0 w-full h-full bg-gray-600 bg-opacity-25 flex justify-center items-center'>
+            <Circleloading/>
+            </div>
+          }
     </form>
   );
 }
