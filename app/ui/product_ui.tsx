@@ -12,11 +12,11 @@ export default function Product({
   }) {
 
     const [openModal, setModal] = useState(false);
-
     const handleModal = () => {
       setModal(!openModal);
     }
 
+    // Server action useTransition
     const [pending, startTransition] = useTransition();
     const handleDelete = (product_id: string) => {
       startTransition(async () => {
@@ -24,7 +24,6 @@ export default function Product({
       });
     };
   
-
     return (
         <div className="w-80 h-auto max-h-[300px] bg-gray-100 rounded-xl flex flex-col gap-2">
             <div className="flex flex-col justify-center items-center text-left py-2">
@@ -56,7 +55,8 @@ export default function Product({
               <div className="flex grow"></div>
               <button
                 type='button'
-                className='h-8 px-2 text-sm rounded-md bg-blue-600 text-white min-w-[100px]'
+                disabled={pending}
+                className='h-8 px-2 text-sm rounded-md bg-blue-600 text-white min-w-[100px] disabled:opacity-30'
                 onClick={handleModal}
                 >
                 Cancel

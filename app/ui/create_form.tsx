@@ -18,7 +18,10 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
 
   const submitHandler = async (_previousState: object, formData: FormData) => {
     try {
-      let response = await createProduct(formData);
+      let response;
+      if (!isEdit) {
+        response = await createProduct(formData);
+      }
       if (isEdit) {
         response = await updateProduct(formData);
       }
@@ -129,14 +132,15 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/home/product"
-          className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+          aria-disabled={isPending}
+          className="aria-disabled:opacity-30 flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
         {
           isEdit ?
-          <Button type="submit" disabled={isPending} >{isPending ? "Editting" : "Edit"}</Button> : 
-          <Button type="submit" disabled={isPending} >{isPending ? "Creating" : "Create"}</Button>
+          <Button isDisable={isPending} >{isPending ? "Editting" : "Edit"}</Button> : 
+          <Button isDisable={isPending} >{isPending ? "Creating" : "Create"}</Button>
         }
         </div>
     </form>

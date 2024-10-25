@@ -34,11 +34,14 @@ export async function createProduct(formData: FormData) {
     return { message: 'Duplicated product'}
   }
   else {
-    await sql`
-    INSERT INTO products (product_id, name, cost, image_url, description)
-    VALUES (${product_id}, ${name}, ${cost}, ${image_url}, ${description})
-  `;
+    try {
+      await sql`
+            INSERT INTO products (product_id, name, cost, image_url, description)
+            VALUES (${product_id}, ${name}, ${cost}, ${image_url}, ${description});`;
+    } catch(e) {
+      return { message: "Failed to create product" };
 
+    }
     revalidatePath('/home/product');
     redirect('/home/product');
   }
@@ -56,20 +59,18 @@ export async function updateProduct(formData: FormData) {
     });
     
     try {
-    await sql`
-    UPDATE products
-    SET name = ${name}, cost = ${cost}, image_url = ${image_url}, description = ${description}
-    WHERE product_id = ${product_id}; `;
+      await sql`
+      UPDATE products
+      SET name = ${name}, cost = ${cost}, image_url = ${image_url}, description = ${description}
+      WHERE product_id = ${product_id}; `;
     } catch (error) {
       console.log(error)
       return {
         message: "error update"
       }
-    }
+    }  
     revalidatePath('/home/product');
-    redirect('/home/product');
-    
-  
+    redirect('/home/product');  
   }
 
   export async function deleteProduct(product_id: string) {
@@ -77,7 +78,5 @@ export async function updateProduct(formData: FormData) {
     DELETE FROM products
     WHERE product_id = ${product_id}; `;
   
-    revalidatePath('/home/product');
-    //   redirect('/home/product')
-  
+    revalidatePath('/home/product');  
   }
