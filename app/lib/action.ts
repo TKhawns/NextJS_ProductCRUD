@@ -61,6 +61,7 @@ export async function updateProduct(formData: FormData) {
     SET name = ${name}, cost = ${cost}, image_url = ${image_url}, description = ${description}
     WHERE product_id = ${product_id}; `;
     } catch (error) {
+      console.log(error)
       return {
         message: "error update"
       }
