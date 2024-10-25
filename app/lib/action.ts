@@ -39,6 +39,7 @@ export async function createProduct(formData: FormData) {
             INSERT INTO products (product_id, name, cost, image_url, description)
             VALUES (${product_id}, ${name}, ${cost}, ${image_url}, ${description});`;
     } catch(e) {
+      console.log(e);
       return { message: "Failed to create product" };
 
     }
