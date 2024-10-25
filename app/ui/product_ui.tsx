@@ -2,9 +2,8 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { FormattedProduct } from "../lib/mapping";
 import { EditProduct } from "./crud_button";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { deleteProduct } from "../lib/action";
-import Circleloading from "./circle_loading";
 
 export default function Product({
     products,
@@ -13,16 +12,18 @@ export default function Product({
   }) {
 
     const [openModal, setModal] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+
     const handleModal = () => {
       setModal(!openModal);
     }
-    const handleDeleteProduct = async (product_id: string) => {
-      setIsLoading(true);
-      await deleteProduct(product_id);
-      setIsLoading(false);
-      setModal(false)
-    }
+
+    const [pending, startTransition] = useTransition();
+    const handleDelete = (product_id: string) => {
+      startTransition(async () => {
+        deleteProduct(product_id);
+      });
+    };
+  
 
     return (
         <div className="w-80 h-auto max-h-[300px] bg-gray-100 rounded-xl flex flex-col gap-2">
@@ -62,17 +63,14 @@ export default function Product({
               </button>
               <button
                 type='button'
-                className='h-8 px-2 text-sm rounded-md bg-red-700 text-white min-w-[100px]'
-                onClick={() => handleDeleteProduct(products.product_id)}
+                disabled={pending}
+                className='h-8 px-2 text-sm rounded-md bg-red-700 text-white min-w-[100px] disabled:opacity-30'
+                onClick={() => handleDelete(products.product_id)}
                 >
-                Delete
+                {pending ? "Deleting" : "Delete"}
               </button>
             </div>
           </div>
-          {isLoading && <div className='fixed top-0 left-0 w-full h-full bg-gray-600 bg-opacity-25 flex justify-center items-center'>
-            <Circleloading/>
-            </div>
-          }
         </div>
       }
         </div>

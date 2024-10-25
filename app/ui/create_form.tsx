@@ -4,33 +4,39 @@ import Link from "next/link";
 import { Button } from "./button";
 import { FormattedProduct } from "../lib/mapping";
 import { createProduct, updateProduct } from "../lib/action";
-import { useState } from "react";
-import Circleloading from "./circle_loading";
+import { useActionState, useState } from "react";
 
 export default function Form({isEdit, product} : {isEdit: boolean, product: FormattedProduct | string}) {
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true); // Bắt đầu loading khi submit form
+  interface InputData {
+    name: string;
+    description: string;
+    cost: string;
+    image_url: string;
+  }
+  const [inputData, setInputData] = useState<InputData|null>();
 
-    const formData = new FormData(e.target as HTMLFormElement);
-
+  const submitHandler = async (_previousState: object, formData: FormData) => {
     try {
+      let response = await createProduct(formData);
       if (isEdit) {
-        await updateProduct(formData); // Gọi hàm updateProduct khi isEdit là true
-      } else {
-        await createProduct(formData); // Gọi hàm createProduct khi isEdit là false
+        response = await updateProduct(formData);
       }
+      return { response };
+
     } catch (error) {
-      console.error("Error during product operation:", error);
-    } finally {
-      setLoading(false); // Kết thúc loading sau khi thực hiện xong
+      return { error };
     }
   };
 
+  const [state, submitAction, isPending] = useActionState(
+    submitHandler,
+    {error: null}
+  );
+
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={submitAction}>
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
         <input className="hidden" name="product_id" type="text" defaultValue={typeof product === "string" ? "" : product.product_id}></input>
         <div className="mb-4">
@@ -46,6 +52,8 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 placeholder="Enter product name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 defaultValue={typeof product === "string" ? "" : product.name}
+                onChange={(e) => setInputData({...inputData, name: e.target.value} as InputData)}
+                value={inputData?.name}
               />
               <Square2StackIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -65,6 +73,8 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 placeholder="Enter description"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 defaultValue={typeof product === "string" ? "" : product.description}
+                onChange={(e) => setInputData({...inputData, description: e.target.value} as InputData)}
+                value={inputData?.description}
               />
               <DocumentChartBarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -84,6 +94,8 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 placeholder="Enter cost"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 defaultValue={typeof product === "string" ? "" : product.cost}
+                onChange={(e) => setInputData({...inputData, cost: e.target.value} as InputData)}
+                value={inputData?.cost}
               />
               <WalletIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
@@ -103,11 +115,15 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 placeholder="Enter image url"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 defaultValue={typeof product === "string" ? "" : product.image_url}
+                onChange={(e) => setInputData({...inputData, image_url: e.target.value} as InputData)}
+                value={inputData?.image_url}
               />
               <GlobeAltIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
         </div>
+
+        {(state?.response) ? <p className="text-red-500">{state.response.message as string}</p> : <p></p>}
 
       </div>
       <div className="mt-6 flex justify-end gap-4">
@@ -117,13 +133,12 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
         >
           Cancel
         </Link>
-        <Button type="submit">
-            {isEdit ? <>Edit product</> : <>Create product</>} </Button>
-      </div>
-      {loading && <div className='fixed top-0 left-0 w-full h-full bg-gray-600 bg-opacity-25 flex justify-center items-center'>
-            <Circleloading/>
-            </div>
-          }
+        {
+          isEdit ?
+          <Button type="submit" disabled={isPending} >{isPending ? "Editting" : "Edit"}</Button> : 
+          <Button type="submit" disabled={isPending} >{isPending ? "Creating" : "Create"}</Button>
+        }
+        </div>
     </form>
   );
 }

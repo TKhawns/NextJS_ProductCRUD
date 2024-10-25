@@ -25,13 +25,23 @@ export async function createProduct(formData: FormData) {
   });
   const product_id = v4();
 
-  await sql`
-  INSERT INTO products (product_id, name, cost, image_url, description)
-  VALUES (${product_id}, ${name}, ${cost}, ${image_url}, ${description})
-`;
+  // Check if product have existed
+  const duplicated = await sql`
+  SELECT p.name FROM products p
+  WHERE p.name = ${name};
+  `
+  if (duplicated.rowCount !== 0) {
+    return { message: 'Duplicated product'}
+  }
+  else {
+    await sql`
+    INSERT INTO products (product_id, name, cost, image_url, description)
+    VALUES (${product_id}, ${name}, ${cost}, ${image_url}, ${description})
+  `;
 
     revalidatePath('/home/product');
-    redirect('/home/product')
+    redirect('/home/product');
+  }
 }
 
 const UpdateProduct = FormSchema.omit({});
@@ -44,14 +54,20 @@ export async function updateProduct(formData: FormData) {
       image_url: formData.get('image_url'),
       description: formData.get('description')
     });
-  
+    
+    try {
     await sql`
     UPDATE products
     SET name = ${name}, cost = ${cost}, image_url = ${image_url}, description = ${description}
     WHERE product_id = ${product_id}; `;
-  
-      revalidatePath('/home/product');
-      redirect('/home/product')
+    } catch (error) {
+      return {
+        message: "error update"
+      }
+    }
+    revalidatePath('/home/product');
+    redirect('/home/product');
+    
   
   }
 

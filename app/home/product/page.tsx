@@ -2,7 +2,6 @@ import { fetchProducts, fetchSearchProduct } from "@/app/database/data";
 import { CreateProduct } from "../../ui/crud_button";
 import Product from "../../ui/product_ui";
 import Search from "../../ui/search";
-// import { listProducts } from "./mock_data";
 
 export default async function Productpage(props: {
   searchParams?: Promise<{
@@ -13,7 +12,7 @@ export default async function Productpage(props: {
     const query = searchParams?.query;
 
     let products = await fetchProducts() ;
-    console.log(products)
+
     if (query) {
        products = await fetchSearchProduct(query);
 
