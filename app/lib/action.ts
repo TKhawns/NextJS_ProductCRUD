@@ -4,7 +4,7 @@ import { sql } from "@vercel/postgres";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
+import { cookies } from "next/headers";
 
 const FormSchema = z.object({
     product_id: z.string(),
@@ -13,6 +13,11 @@ const FormSchema = z.object({
     image_url: z.string(),
     description: z.string(),
   });
+
+const UserSchema = z.object({
+  email: z.string(),
+  password: z.string(),
+})
 
 const CreateProduct = FormSchema.omit({product_id: true});
 
@@ -81,3 +86,48 @@ export async function updateProduct(formData: FormData) {
   
     revalidatePath('/home/product');  
   }
+
+  const LoginUser = UserSchema.omit({});
+
+  export async function loginUser(formData: FormData) {
+    const {email, password} = LoginUser.parse({
+     email: formData.get("email"),
+     password: formData.get("password")
+    });
+
+    let status;
+    try {
+      const res = await fetch("http://localhost:8080/user/login", {
+          method: 'POST',
+          headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+              email: email,
+              password: password
+          }),
+      })
+
+      const result = await res.json(); 
+      // if login fail, statusCode have in response, else null.
+      status = result.statusCode;
+      //  if login fail
+      if (status) {
+        return result.message;
+      }
+
+      const cookieStore = await cookies()
+      cookieStore.set("accessToken", result.accessToken);
+      cookieStore.set("refreshToken", result.refreshToken);
+      return "null";
+      
+      } catch (e) {
+        return "Error";
+
+      } finally {
+        if (!status) {
+          redirect('/home/product')
+        }
+    }
+}
