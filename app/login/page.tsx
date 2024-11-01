@@ -17,7 +17,8 @@ export default function LoginPage() {
             return response;
 
         } catch (error) {
-        return "Đăng nhập thất bại!";
+            console.log(error);
+            return "Đăng nhập thất bại!";
         }
     };
     const [state, loginAction, isPendding] = useActionState(loginHandler, "null");

@@ -123,6 +123,7 @@ export async function updateProduct(formData: FormData) {
       return "null";
       
       } catch (e) {
+        console.log(e);
         return "Error";
 
       } finally {
