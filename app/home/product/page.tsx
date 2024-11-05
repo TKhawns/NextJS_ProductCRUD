@@ -5,10 +5,12 @@ import Product from "@/app/ui/product_ui";
 import { FormattedProduct } from "@/app/lib/mapping";
 import { validateToken } from "@/app/database/validate_token";
 
-export default async function Productpage(props: {
-  searchParams?: Promise<{
-    query?: string;}>;
-}) {
+export default async function Productpage(
+  // props: {
+  // searchParams?: Promise<{
+  //   query?: string;}>;
+  // }
+) {
 
     // const searchParams = await props.searchParams;
     // const query = searchParams?.query;
@@ -19,7 +21,7 @@ export default async function Productpage(props: {
     if (isValidated) {
       products = await fetchProducts() ;
     }
-    
+
 
   //   if (query) {
   //     products = await fetchSearchProduct(query);
