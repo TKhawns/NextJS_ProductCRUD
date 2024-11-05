@@ -1,8 +1,8 @@
 export type FormattedProduct = {
-    product_id: string,
+    id: string,
     name: string;
     cost: string;
-    image_url: string;
+    url_image: string;
     description: string;
   };
   

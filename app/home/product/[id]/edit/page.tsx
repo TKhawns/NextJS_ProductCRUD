@@ -6,7 +6,7 @@ export default async function EditPage(props: { params: Promise<{ id: string }> 
 
     const params = await props.params;
     const id_find = params.id;
-    const filterListProduct = products.filter((item) => item.product_id === id_find)
+    const filterListProduct = products.filter((item: any) => item.id === id_find)
 
     return (
         <div>

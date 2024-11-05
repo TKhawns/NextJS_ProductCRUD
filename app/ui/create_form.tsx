@@ -41,7 +41,7 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
   return (
     <form action={submitAction}>
         <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        <input className="hidden" name="product_id" type="text" defaultValue={typeof product === "string" ? "" : product.product_id}></input>
+        <input className="hidden" name="product_id" type="text" defaultValue={typeof product === "string" ? "" : product.id}></input>
         <div className="mb-4">
           <label htmlFor="product" className="mb-2 block text-sm font-medium">
             Product name
@@ -117,7 +117,7 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 type="text"
                 placeholder="Enter image url"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                defaultValue={typeof product === "string" ? "" : product.image_url}
+                defaultValue={typeof product === "string" ? "" : product.url_image}
                 onChange={(e) => setInputData({...inputData, image_url: e.target.value} as InputData)}
                 value={inputData?.image_url}
               />

@@ -28,7 +28,7 @@ export default function Product({
         <div className="w-80 h-auto max-h-[300px] bg-gray-100 rounded-xl flex flex-col gap-2">
             <div className="flex flex-col justify-center items-center text-left py-2">
                 <div className="w-full flex flex-row px-5">
-                    <img className="w-20 h-20 rounded-xl object-cover overflow-hidden" src={products.image_url}/>
+                    <img className="w-20 h-20 rounded-xl object-cover overflow-hidden" src={products.url_image}/>
                     <div className="px-10 flex flex-col items-start justify-center font-bold">
                         <div className="text-gray">{products.name}</div>
                         <div className="text-sky-800">{products.cost}</div>
@@ -38,7 +38,7 @@ export default function Product({
             <div className="text-gray font-bold px-5">Summary</div>
             <div className="text-gray grow font-normal px-5">{products.description}</div>
                 <div className="flex flex-row w-full justify-center items-center gap-10 py-5">
-                    <EditProduct id={products.product_id}/>
+                    <EditProduct id={products.id}/>
                     <button onClick={handleModal}  className="rounded-md border p-2 hover:bg-sky-100">
                         <span className="sr-only">Delete</span>
                         <TrashIcon className="w-6" />
@@ -65,7 +65,7 @@ export default function Product({
                 type='button'
                 disabled={pending}
                 className='h-8 px-2 text-sm rounded-md bg-red-700 text-white min-w-[100px] disabled:opacity-30'
-                onClick={() => handleDelete(products.product_id)}
+                onClick={() => handleDelete(products.id)}
                 >
                 {pending ? "Deleting" : "Delete"}
               </button>

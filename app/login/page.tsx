@@ -6,8 +6,8 @@ import { loginUser } from "../lib/action";
 export default function LoginPage() {
 
     interface InputData {
-        email: string,
-        password: string
+        email: string | '',
+        password: string | ''
       }
     const [inputData, setInputData] = useState<InputData|null>();
 
@@ -38,7 +38,7 @@ export default function LoginPage() {
                         placeholder="Email"
                         name="email"
                         onChange={(e) => setInputData({...inputData, email: e.target.value} as InputData)}
-                        value={state.message != "null" ? inputData?.email : ""}
+                        value={(state.message !== "null" ? inputData?.email : '') || ''}
                     />
                     <input
                         className="peer block w-2/3 rounded-md border border-black py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
@@ -46,7 +46,7 @@ export default function LoginPage() {
                         type="password"
                         name="password"
                         onChange={(e) => setInputData({...inputData, password: e.target.value} as InputData)}
-                        value={state.message != "null" ? inputData?.password : ""}
+                        value={(state.message !== "null" ? inputData?.password : '') || ''}
                     />
                     <div className="content-start text-sm">Forgot your password?</div>
 
