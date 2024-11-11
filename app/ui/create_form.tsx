@@ -1,20 +1,30 @@
 "use client";
-import {DocumentChartBarIcon, GlobeAltIcon, Square2StackIcon, WalletIcon } from "@heroicons/react/24/outline";
+import {
+  DocumentChartBarIcon,
+  GlobeAltIcon,
+  Square2StackIcon,
+  WalletIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { Button } from "./button";
 import { FormattedProduct } from "../lib/mapping";
 import { createProduct, updateProduct } from "../lib/action";
 import { useActionState, useState } from "react";
 
-export default function Form({isEdit, product} : {isEdit: boolean, product: FormattedProduct | string}) {
-
+export default function Form({
+  isEdit,
+  product,
+}: {
+  isEdit: boolean;
+  product: FormattedProduct | string;
+}) {
   interface InputData {
     name: string;
     description: string;
     cost: string;
     image_url: string;
   }
-  const [inputData, setInputData] = useState<InputData|null>();
+  const [inputData, setInputData] = useState<InputData | null>();
 
   const submitHandler = async (_previousState: object, formData: FormData) => {
     try {
@@ -26,22 +36,24 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
         response = await updateProduct(formData);
       }
       return { response };
-
     } catch (error) {
       return { error };
     }
   };
 
-  const [state, submitAction, isPending] = useActionState(
-    submitHandler,
-    {error: null}
-  );
-
+  const [state, submitAction, isPending] = useActionState(submitHandler, {
+    error: null,
+  });
 
   return (
     <form action={submitAction}>
-        <div className="rounded-md bg-gray-50 p-4 md:p-6">
-        <input className="hidden" name="product_id" type="text" defaultValue={typeof product === "string" ? "" : product.id}></input>
+      <div className="rounded-md bg-gray-50 p-4 md:p-6">
+        <input
+          className="hidden"
+          name="product_id"
+          type="text"
+          defaultValue={typeof product === "string" ? "" : product.id}
+        ></input>
         <div className="mb-4">
           <label htmlFor="product" className="mb-2 block text-sm font-medium">
             Product name
@@ -55,7 +67,12 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 placeholder="Enter product name"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 defaultValue={typeof product === "string" ? "" : product.name}
-                onChange={(e) => setInputData({...inputData, name: e.target.value} as InputData)}
+                onChange={(e) =>
+                  setInputData({
+                    ...inputData,
+                    name: e.target.value,
+                  } as InputData)
+                }
                 value={inputData?.name}
               />
               <Square2StackIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -75,8 +92,15 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 type="text"
                 placeholder="Enter description"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                defaultValue={typeof product === "string" ? "" : product.description}
-                onChange={(e) => setInputData({...inputData, description: e.target.value} as InputData)}
+                defaultValue={
+                  typeof product === "string" ? "" : product.description
+                }
+                onChange={(e) =>
+                  setInputData({
+                    ...inputData,
+                    description: e.target.value,
+                  } as InputData)
+                }
                 value={inputData?.description}
               />
               <DocumentChartBarIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -97,7 +121,12 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 placeholder="Enter cost"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
                 defaultValue={typeof product === "string" ? "" : product.cost}
-                onChange={(e) => setInputData({...inputData, cost: e.target.value} as InputData)}
+                onChange={(e) =>
+                  setInputData({
+                    ...inputData,
+                    cost: e.target.value,
+                  } as InputData)
+                }
                 value={inputData?.cost}
               />
               <WalletIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -117,8 +146,15 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
                 type="text"
                 placeholder="Enter image url"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
-                defaultValue={typeof product === "string" ? "" : product.url_image}
-                onChange={(e) => setInputData({...inputData, image_url: e.target.value} as InputData)}
+                defaultValue={
+                  typeof product === "string" ? "" : product.url_image
+                }
+                onChange={(e) =>
+                  setInputData({
+                    ...inputData,
+                    image_url: e.target.value,
+                  } as InputData)
+                }
                 value={inputData?.image_url}
               />
               <GlobeAltIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -126,8 +162,11 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
           </div>
         </div>
 
-        {(state?.response) ? <p className="text-red-500">{state.response.message as string}</p> : <p></p>}
-
+        {state?.response ? (
+          <p className="text-red-500">{state.response.message as string}</p>
+        ) : (
+          <p></p>
+        )}
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
@@ -137,12 +176,16 @@ export default function Form({isEdit, product} : {isEdit: boolean, product: Form
         >
           Cancel
         </Link>
-        {
-          isEdit ?
-          <Button isDisable={isPending} >{isPending ? "Editting" : "Edit"}</Button> : 
-          <Button isDisable={isPending} >{isPending ? "Creating" : "Create"}</Button>
-        }
-        </div>
+        {isEdit ? (
+          <Button isDisable={isPending}>
+            {isPending ? "Editting" : "Edit"}
+          </Button>
+        ) : (
+          <Button isDisable={isPending}>
+            {isPending ? "Creating" : "Create"}
+          </Button>
+        )}
+      </div>
     </form>
   );
 }
