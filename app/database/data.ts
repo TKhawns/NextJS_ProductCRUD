@@ -1,23 +1,43 @@
 import { sql } from "@vercel/postgres";
-import { cookies } from "next/headers";
 import { Product } from "./model";
 
 export async function fetchProducts() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value.toString();
-  console.log(accessToken);
   try {
-    const res = await fetch("http://localhost:8080/user/product-list", {
+    const res = await fetch("/api/products", {
       method: "GET",
-      credentials: "include",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
     });
-    // const temp = await res.json();
-    // console.log("Result", temp);
-    // const data = await sql<Product>`SELECT * FROM products`;
+    const temp = await res.json();
+    console.log(temp);
+    return temp;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+export async function fetchFilterProduct(queryColor: string[]) {
+  const errorData = await fetchProducts();
+  if (queryColor.length === 0) {
+    return errorData;
+  }
+  try {
+    console.log(JSON.stringify({ colorIds: queryColor }));
+    const res = await fetch("http://localhost:8080/user/product-filter", {
+      method: "POST",
+      body: JSON.stringify({ colorIds: queryColor }),
+    });
+    // Test return []
+    return errorData;
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}
+
+export async function fetColors() {
+  try {
+    const res = await fetch("/api/colors", {
+      method: "GET",
+    });
     const temp = await res.json();
     return temp;
   } catch (error) {

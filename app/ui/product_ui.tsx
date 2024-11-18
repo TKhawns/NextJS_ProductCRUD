@@ -24,11 +24,13 @@ export default function Product({ products }: { products: FormattedProduct }) {
     });
   };
 
-  const handleChangeColor = (choice: string) => {
+  const handleChangeColor = (choice: string, productName: string) => {
     const params = new URLSearchParams(colorParam);
     if (choice) {
+      params.set("name", productName);
       params.set("color", choice);
     } else {
+      params.delete("name");
       params.delete("color");
     }
 
@@ -44,42 +46,12 @@ export default function Product({ products }: { products: FormattedProduct }) {
             className="w-20 h-20 rounded-xl object-cover overflow-hidden"
             src={products.url_image}
           />
-          <div className="px-10 flex flex-col items-start justify-center font-bold">
+          <div className="pl-10 flex flex-col items-start justify-center font-bold">
             <div className="text-gray">{products.name}</div>
             <div className="text-sky-800">{products.cost}</div>
           </div>
         </div>
       </div>
-      <form className="flex flex-row gap-2 justify-evenly items-center">
-        <input
-          type="radio"
-          name="color"
-          value={"yellow"}
-          onClick={(e) => handleChangeColor(e.currentTarget.value)}
-        />
-        <label>Yellow</label>
-        <input
-          type="radio"
-          name="color"
-          value={"red"}
-          onClick={(e) => handleChangeColor(e.currentTarget.value)}
-        />
-        <label>Red</label>
-        <input
-          type="radio"
-          name="color"
-          value={"black"}
-          onClick={(e) => handleChangeColor(e.currentTarget.value)}
-        />
-        <label>Black</label>
-        <input
-          type="radio"
-          name="color"
-          value={"blue"}
-          onClick={(e) => handleChangeColor(e.currentTarget.value)}
-        />
-        <label>Blue</label>
-      </form>
       <div className="text-gray font-bold px-5">Summary</div>
       <div className="text-gray grow font-normal px-5">
         {products.description}

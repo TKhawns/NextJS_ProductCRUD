@@ -9,7 +9,8 @@ import Link from "next/link";
 import { Button } from "./button";
 import { FormattedProduct } from "../lib/mapping";
 import { createProduct, updateProduct } from "../lib/action";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 export default function Form({
   isEdit,
@@ -44,6 +45,19 @@ export default function Form({
   const [state, submitAction, isPending] = useActionState(submitHandler, {
     error: null,
   });
+
+  const productName = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  useEffect(() => {
+    const editParam = new URLSearchParams(productName);
+    typeof product === "string"
+      ? editParam.delete("name")
+      : editParam.set("name", product.name);
+
+    replace(`${pathname}?${editParam.toString()}`);
+  }, []);
 
   return (
     <form action={submitAction}>
