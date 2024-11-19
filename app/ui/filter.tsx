@@ -8,7 +8,13 @@ interface Color {
   color: string;
 }
 
-export default function Filter({ colors }: { colors: Color[] }) {
+export default function Filter({
+  colors,
+  token,
+}: {
+  colors: Color[];
+  token: string;
+}) {
   // colors parameter here is all list colors from database.
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -37,7 +43,7 @@ export default function Filter({ colors }: { colors: Color[] }) {
       .filter(Boolean);
     console.log("Test selectedIds: ", selectedIds);
     // Fetch products by id of colors instead get all products.
-    return fetchProducts();
+    return fetchProducts(token);
   }
 
   function handleFilter(term: string, checked: boolean) {
@@ -70,11 +76,12 @@ export default function Filter({ colors }: { colors: Color[] }) {
         <label key={color.id} className="flex items-center space-x-2">
           <input
             type="checkbox"
-            className={"form-checkbox h-4 w-4"}
+            className="form-checkbox h-4 w-4"
             checked={selectedColors.includes(color.color.toLowerCase())}
             onChange={(e) =>
               handleFilter(color.color.toLowerCase(), e.target.checked)
             }
+            value={color.color.toLowerCase()}
           />
           <span>{color.color}</span>
         </label>

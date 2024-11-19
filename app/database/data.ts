@@ -1,20 +1,28 @@
 import { sql } from "@vercel/postgres";
 import { Product } from "./model";
 
-export async function fetchProducts() {
+export async function fetchProducts(token: string) {
   try {
-    const res = await fetch("/api/products", {
+    const res = await fetch("http://localhost:8080/user/product-list", {
       method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     });
+    // const res = await fetch("/api/products", {
+    //   method: "GET",
+    // });
     const temp = await res.json();
+    console.log(temp);
     return temp;
   } catch (error) {
     console.log(error);
     return [];
   }
 }
-export async function fetchFilterProduct(queryColor: string[]) {
-  const errorData = await fetchProducts();
+export async function fetchFilterProduct(queryColor: string[], token: string) {
+  const errorData = await fetchProducts(token);
   if (queryColor.length === 0) {
     return errorData;
   }
@@ -32,10 +40,17 @@ export async function fetchFilterProduct(queryColor: string[]) {
   }
 }
 
-export async function fetColors() {
+export async function fetColors(accessToken: string) {
   try {
-    const res = await fetch("/api/colors", {
+    // const res = await fetch("/api/colors", {
+    //   method: "GET",
+    // });
+    const res = await fetch("http://localhost:8080/user/color-list", {
       method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
     });
     const temp = await res.json();
     return temp;

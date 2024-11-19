@@ -6,19 +6,15 @@ import Filter from "@/app/ui/filter";
 import Product from "@/app/ui/product_ui";
 import { useQuery } from "@tanstack/react-query";
 
-export default function Products() {
+export default function Products({ token }: { token: string }) {
   // Use react-query to fetch products and colors.
   const { data: productData, isLoading: productLoading } = useQuery({
     queryKey: ["products"],
-    queryFn: async () => {
-      return await fetchProducts();
-    },
+    queryFn: () => fetchProducts(token),
   });
   const { data: colorData, isLoading: colorLoading } = useQuery({
     queryKey: ["colors"],
-    queryFn: async () => {
-      return await fetColors();
-    },
+    queryFn: () => fetColors(token),
   });
 
   if (productLoading) {
@@ -31,7 +27,7 @@ export default function Products() {
         <h1 className={`text-2xl`}>All products</h1>
       </div>
       <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        {!colorLoading && <Filter colors={colorData} />}
+        {!colorLoading && <Filter colors={colorData} token={token} />}
 
         <CreateProduct />
       </div>
