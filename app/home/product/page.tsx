@@ -7,21 +7,12 @@ import {
 } from "@tanstack/react-query";
 import Products from "./product";
 
-export default async function Productpage(props: {
-  searchParams?: Promise<{
-    query?: string;
-    colors?: string;
-  }>;
-}) {
-  const searchParams = await props.searchParams;
-
-  const queryColor = searchParams?.colors?.split(",") || [];
-  console.log("Test queryColor: ", queryColor);
-
+export default async function Productpage() {
+  // Check if token is valid
   const isValidated = await validateToken();
-
   // Fetch products and colors
   const queryClient = new QueryClient();
+
   if (isValidated) {
     await queryClient.prefetchQuery({
       queryKey: ["products"],

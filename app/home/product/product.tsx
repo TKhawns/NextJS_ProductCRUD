@@ -7,6 +7,7 @@ import Product from "@/app/ui/product_ui";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Products() {
+  // Use react-query to fetch products and colors.
   const { data: productData, isLoading: productLoading } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
@@ -20,7 +21,7 @@ export default function Products() {
     },
   });
 
-  if (productLoading || colorLoading) {
+  if (productLoading) {
     return <div className="text-red">Loading...</div>;
   }
 

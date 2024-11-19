@@ -7,7 +7,6 @@ export async function fetchProducts() {
       method: "GET",
     });
     const temp = await res.json();
-    console.log(temp);
     return temp;
   } catch (error) {
     console.log(error);

@@ -9,7 +9,7 @@ interface Color {
 }
 
 export default function Filter({ colors }: { colors: Color[] }) {
-  console.log("Test colors 1: ", colors);
+  // colors parameter here is all list colors from database.
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -17,26 +17,26 @@ export default function Filter({ colors }: { colors: Color[] }) {
 
   // Initialize selected colors from URL params when component mounts
   useEffect(() => {
-    const colorParams = searchParams.get("colors")?.split(",") || [];
+    const colorParams =
+      searchParams.get("colors")?.split(",").filter(Boolean) || [];
     setSelectedColors(colorParams);
+  }, [searchParams]);
 
-    // If there are colors in URL, trigger initial filter
-    if (colorParams.length > 0) {
+  useEffect(() => {
+    if (selectedColors.length > 0) {
       handleFilterSubmit(colors);
     }
-  }, [colors]);
+  }, [selectedColors]);
 
   async function handleFilterSubmit(colors: Color[]) {
-    console.log("Test colors 2: ", colors);
     const selectedIds = selectedColors
       .map((colorName) => {
-        const colorObj = colors.find(
-          (c) => c.color.toLowerCase() === colorName
-        );
+        const colorObj = colors.find((c) => c.color === colorName);
         return colorObj?.id;
       })
       .filter(Boolean);
     console.log("Test selectedIds: ", selectedIds);
+    // Fetch products by id of colors instead get all products.
     return fetchProducts();
   }
 
@@ -70,7 +70,7 @@ export default function Filter({ colors }: { colors: Color[] }) {
         <label key={color.id} className="flex items-center space-x-2">
           <input
             type="checkbox"
-            className={`form-checkbox h-4 w-4 text-${color.color.toLowerCase()}-600`}
+            className={"form-checkbox h-4 w-4"}
             checked={selectedColors.includes(color.color.toLowerCase())}
             onChange={(e) =>
               handleFilter(color.color.toLowerCase(), e.target.checked)

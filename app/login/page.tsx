@@ -11,6 +11,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function LoginPage() {
   const router = useRouter();
+
+  // React-hook-form to validate the input login data.
   const {
     register,
     handleSubmit,
@@ -20,21 +22,27 @@ export default function LoginPage() {
     mode: "all",
   });
 
-  const mutation = useMutation({
-    mutationFn: (data: LoginSchemaType) => loginUser(data),
-    onSuccess: (response) => {
+  const onSubmit: SubmitHandler<LoginSchemaType> = (data) => {
+    loginMutation(data);
+  };
+
+  const { mutate: loginMutation, isPending: loginPending } = useMutation({
+    mutationFn: async (data: LoginSchemaType) => {
+      // Server action to login user
+      const result = await loginUser(data);
+      if (!result.id) {
+        throw new Error(result.message);
+      }
+      return result.data;
+    },
+    onError: () => {
+      toast.error("Login failed");
+    },
+    onSuccess: () => {
       toast.success("Login successful!");
-      // Optionally redirect after successful login
       router.push("/home/product");
     },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Login failed");
-    },
   });
-
-  const onSubmit: SubmitHandler<LoginSchemaType> = (data) => {
-    mutation.mutate(data);
-  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -75,10 +83,10 @@ export default function LoginPage() {
             <div className="content-start text-sm">Forgot your password?</div>
 
             <button
-              disabled={mutation.isPending}
+              disabled={loginPending}
               className="text-center flex h-10 w-2/3 items-center justify-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
             >
-              {mutation.isPending ? "Logging in..." : "Login"}
+              {loginPending ? "Logging in..." : "Login"}
             </button>
 
             <div className="content-start text-sm flex flex-row gap-6">

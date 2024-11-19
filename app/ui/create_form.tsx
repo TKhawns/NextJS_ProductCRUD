@@ -8,10 +8,20 @@ import {
 import Link from "next/link";
 import { Button } from "./button";
 import { FormattedProduct } from "../lib/mapping";
-import { createProduct, updateProduct } from "../lib/action";
-import { useActionState, useEffect, useState } from "react";
+import { createProduct } from "../lib/action";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+// Common component for create and edit product, have 2 props: isEdit and product to handle
+interface InputData {
+  name: string;
+  description: string;
+  cost: string;
+  image_url: string;
+}
 export default function Form({
   isEdit,
   product,
@@ -19,36 +29,33 @@ export default function Form({
   isEdit: boolean;
   product: FormattedProduct | string;
 }) {
-  interface InputData {
-    name: string;
-    description: string;
-    cost: string;
-    image_url: string;
-  }
-  const [inputData, setInputData] = useState<InputData | null>();
-
-  const submitHandler = async (_previousState: object, formData: FormData) => {
-    try {
-      let response;
-      if (!isEdit) {
-        response = await createProduct(formData);
-      }
-      if (isEdit) {
-        response = await updateProduct(formData);
-      }
-      return { response };
-    } catch (error) {
-      return { error };
-    }
-  };
-
-  const [state, submitAction, isPending] = useActionState(submitHandler, {
-    error: null,
-  });
-
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const productName = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
+
+  const [inputData, setInputData] = useState<InputData | null>();
+
+  const { mutate: createMutation, isPending: createPending } = useMutation({
+    mutationFn: async (data: FormData) => {
+      const result = await createProduct(data);
+      console.log("Test result of create: ", result);
+      if (result !== "") {
+        throw new Error(result);
+      }
+      return result;
+    },
+    onSuccess: async () => {
+      toast.success("Product created successfully!");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      router.push("/home/product");
+    },
+    onError: () => {
+      toast.error("Failed to create product");
+    },
+  });
 
   useEffect(() => {
     const editParam = new URLSearchParams(productName);
@@ -59,8 +66,38 @@ export default function Form({
     replace(`${pathname}?${editParam.toString()}`);
   }, []);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    createMutation(formData);
+    // if (isEdit) {
+    //   updateMutation.mutate(formData);
+    // }
+  };
+
+  // const submitHandler = async (_previousState: object, formData: FormData) => {
+  //   try {
+  //     let response;
+  //     if (!isEdit) {
+  //       response = await createProduct(formData);
+  //     }
+  //     if (isEdit) {
+  //       response = await updateProduct(formData);
+  //     }
+  //     return { response };
+  //   } catch (error) {
+  //     return { error };
+  //   }
+  // };
+
+  // const [state, submitAction, isPending] = useActionState(submitHandler, {
+  //   error: null,
+  // });
+
   return (
-    <form action={submitAction}>
+    <form /*action={submitAction}*/ onSubmit={handleSubmit}>
+      <ToastContainer position="top-left" autoClose={2000} theme="light" />
+
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         <input
           className="hidden"
@@ -175,28 +212,22 @@ export default function Form({
             </div>
           </div>
         </div>
-
-        {state?.response ? (
-          <p className="text-red-500">{state.response.message as string}</p>
-        ) : (
-          <p></p>
-        )}
       </div>
       <div className="mt-6 flex justify-end gap-4">
         <Link
           href="/home/product"
-          aria-disabled={isPending}
+          aria-disabled={createPending}
           className="aria-disabled:opacity-30 flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
         >
           Cancel
         </Link>
         {isEdit ? (
-          <Button isDisable={isPending}>
-            {isPending ? "Editting" : "Edit"}
+          <Button isDisable={createPending}>
+            {createPending ? "Editting" : "Edit"}
           </Button>
         ) : (
-          <Button isDisable={isPending}>
-            {isPending ? "Creating" : "Create"}
+          <Button isDisable={createPending}>
+            {createPending ? "Creating" : "Create"}
           </Button>
         )}
       </div>

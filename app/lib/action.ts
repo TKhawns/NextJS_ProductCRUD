@@ -18,6 +18,12 @@ const FormSchema = z.object({
 const CreateProduct = FormSchema.omit({ product_id: true });
 
 export async function createProduct(formData: FormData) {
+  const { name, cost, image_url, description } = CreateProduct.parse({
+    name: formData.get("name"),
+    cost: formData.get("cost"),
+    image_url: formData.get("image_url"),
+    description: formData.get("description"),
+  });
   let status = "";
   try {
     const res = await fetch("http://localhost:8080/user/create-product", {
@@ -27,28 +33,30 @@ export async function createProduct(formData: FormData) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: formData.get("name"),
-        cost: parseInt(formData.get("cost") as string),
-        url_image: formData.get("image_url"),
-        description: formData.get("description"),
+        name: name,
+        cost: parseInt(cost as string),
+        url_image: image_url,
+        description: description,
       }),
     });
 
     const result = await res.json();
-    console.log(result);
+    console.log("Test result: ", result);
     if (result.statusCode) {
       status = result.statusCode;
       return result.message;
     }
+    return "";
   } catch (error) {
     console.log(error);
     return { message: "Failed to create product" };
-  } finally {
-    if (status === "") {
-      // revalidatePath("/home/product");
-      redirect("/home/product");
-    }
   }
+  // finally {
+  //   if (status === "") {
+  //     // revalidatePath("/home/product");
+  //     // redirect("/home/product");
+  //   }
+  // }
 }
 
 const UpdateProduct = FormSchema.omit({});
@@ -103,6 +111,7 @@ export async function loginUser(loginData: LoginSchemaType) {
 
     const result = await res.json();
     // if login fail, statusCode have in response, else null.
+    console.log("Test result: ", result);
     if (result.statusCode) {
       status = result.statusCode;
       return result.message;
