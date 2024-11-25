@@ -1,9 +1,11 @@
 import { sql } from "@vercel/postgres";
 import { Product } from "./model";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function fetchProducts(token: string) {
+  console.log("Test apiUrl from products: ", apiUrl);
   try {
-    const res = await fetch("http://localhost:8080/user/product-list", {
+    const res = await fetch(`${apiUrl}/user/product-list`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -32,6 +34,7 @@ export async function fetchFilterProduct(queryColor: string[], token: string) {
       method: "POST",
       body: JSON.stringify({ colorIds: queryColor }),
     });
+    console.log(res);
     // Test return []
     return errorData;
   } catch (error) {
@@ -45,7 +48,7 @@ export async function fetColors(accessToken: string) {
     // const res = await fetch("/api/colors", {
     //   method: "GET",
     // });
-    const res = await fetch("http://localhost:8080/user/color-list", {
+    const res = await fetch(`${apiUrl}/user/color-list`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,

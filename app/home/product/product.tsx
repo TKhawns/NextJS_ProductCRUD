@@ -5,6 +5,7 @@ import { CreateProduct } from "@/app/ui/crud_button";
 import Filter from "@/app/ui/filter";
 import Product from "@/app/ui/product_ui";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 export default function Products({ token }: { token: string }) {
   // Use react-query to fetch products and colors.
@@ -21,21 +22,29 @@ export default function Products({ token }: { token: string }) {
     return <div className="text-red">Loading...</div>;
   }
 
-  return (
-    <div className="w-full h-5/6">
-      <div className="flex w-full items-center justify-between">
-        <h1 className={`text-2xl`}>All products</h1>
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
-        {!colorLoading && <Filter colors={colorData} token={token} />}
+  const [isClient, setIsClient] = useState(false);
 
-        <CreateProduct />
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  return (
+    isClient && (
+      <div className="w-full h-5/6">
+        <div className="flex w-full items-center justify-between">
+          <h1 className={`text-2xl`}>All products</h1>
+        </div>
+        <div className="mt-4 flex items-center justify-between gap-2 md:mt-8">
+          {!colorLoading && <Filter colors={colorData} token={token} />}
+
+          <CreateProduct />
+        </div>
+        <div className="w-full h-full overflow-y-auto grid grid grid-cols-3 gap-10 my-10">
+          {productData.map((product: FormattedProduct) => (
+            <Product key={product.id} products={product} />
+          ))}
+        </div>
       </div>
-      <div className="w-full h-full overflow-y-auto grid grid grid-cols-3 gap-10 my-10">
-        {productData.map((product: FormattedProduct) => (
-          <Product key={product.id} products={product} />
-        ))}
-      </div>
-    </div>
+    )
   );
 }

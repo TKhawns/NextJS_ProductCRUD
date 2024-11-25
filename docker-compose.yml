@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://host.docker.internal:8080
+    environment:
+      - NEXTAUTH_URL=http://localhost:3001
+      - NEXTAUTH_SECRET=secret
+      - NEXT_PUBLIC_API_URL=http://host.docker.internal:8080
+    container_name: product_next_docker
+    image: product_next_app:latest
+    ports:
+      - "3001:3000"
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

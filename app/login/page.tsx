@@ -8,6 +8,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import "react-toastify/dist/ReactToastify.css";
+import googleIcon from "../../assets/google_icon.png";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,6 +45,10 @@ export default function LoginPage() {
     },
   });
 
+  const handleGoogleLogin = async (event: any) => {
+    event.preventDefault();
+    window.location.href = "http://localhost:8080/google";
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <ToastContainer position="top-left" autoClose={2000} theme="light" />
@@ -84,7 +89,7 @@ export default function LoginPage() {
 
             <button
               disabled={loginPending}
-              className="text-center flex h-10 w-2/3 items-center justify-center rounded-lg bg-blue-500 px-4 text-sm font-medium text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+              className="text-center flex h-10 w-2/3 items-center justify-center rounded-lg bg-blue-500 px-4 text-sm font-bold text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
             >
               {loginPending ? "Logging in..." : "Login"}
             </button>
@@ -95,6 +100,18 @@ export default function LoginPage() {
                 Signup
               </Link>
             </div>
+
+            <button
+              className="text-center flex flex-row gap-3 h-10 w-2/3 items-center justify-center border-[1px] border-gray-500 rounded-lg bg-white px-4 text-sm font-bold text-black transition-colors hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
+              onClick={(e) => {
+                handleGoogleLogin(e);
+              }}
+            >
+              <div className="w-5 h-5">
+                <img src={googleIcon.src} alt="google icon" />
+              </div>
+              Login with Google
+            </button>
           </div>
         </div>
       </div>

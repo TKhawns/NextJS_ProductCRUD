@@ -17,6 +17,7 @@ export async function GET() {
     console.log("Test data: ", data);
     return NextResponse.json(data);
   } catch (error) {
+    console.error("Error fetching colors: ", error);
     return NextResponse.json([], { status: 500 });
   }
 }

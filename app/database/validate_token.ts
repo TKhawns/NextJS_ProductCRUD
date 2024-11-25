@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function validateToken() {
   const cookieStore = await cookies();
@@ -6,7 +7,7 @@ export async function validateToken() {
   const refreshToken = cookieStore.get("refreshToken")?.value.toString();
 
   try {
-    const res = await fetch("http://localhost:8080/user/product-list", {
+    const res = await fetch(`${apiUrl}/user/product-list`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -16,7 +17,7 @@ export async function validateToken() {
     const data = await res.json();
     if (data.statusCode === 500) {
       try {
-        const res = await fetch("http://localhost:8080/auth/refresh", {
+        const res = await fetch(`${apiUrl}/auth/refresh`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${refreshToken}`,
@@ -32,7 +33,7 @@ export async function validateToken() {
     }
     return accessToken;
   } catch (error) {
-    console.error("Get product error:", error);
+    console.error("Validate token error:", error);
     return "";
   }
 }

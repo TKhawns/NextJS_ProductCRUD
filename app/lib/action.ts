@@ -1,11 +1,12 @@
 "use server";
-import { v4 } from "uuid";
 import { sql } from "@vercel/postgres";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { LoginSchemaType } from "../validate_schema/user_schema";
+
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const FormSchema = z.object({
   product_id: z.string(),
@@ -24,7 +25,6 @@ export async function createProduct(formData: FormData) {
     image_url: formData.get("image_url"),
     description: formData.get("description"),
   });
-  let status = "";
   try {
     const res = await fetch("http://localhost:8080/user/create-product", {
       method: "POST",
@@ -43,7 +43,6 @@ export async function createProduct(formData: FormData) {
     const result = await res.json();
     console.log("Test result: ", result);
     if (result.statusCode) {
-      status = result.statusCode;
       return result.message;
     }
     return "";
@@ -95,9 +94,10 @@ export async function deleteProduct(product_id: string) {
 }
 
 export async function loginUser(loginData: LoginSchemaType) {
+  console.log("Test apiUrl: ", apiUrl);
   let status = "";
   try {
-    const res = await fetch("http://localhost:8080/user/login", {
+    const res = await fetch(`${apiUrl}/user/login`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -152,5 +152,6 @@ const setAuthCookie = async (response: Response) => {
       secure: true,
       httpOnly: true,
     });
+    console.log("Test set cookie: ", cookieStore);
   }
 };

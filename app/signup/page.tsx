@@ -28,7 +28,6 @@ export default function Page() {
     register,
     watch,
     handleSubmit,
-    setError,
     formState: { isSubmitting, errors },
   } = useForm<SingupSchemaType>({
     resolver: zodResolver(SingupSchema),
@@ -37,7 +36,7 @@ export default function Page() {
 
   const selectedCity = watch("city") || defaultCity;
 
-  const onSubmit: SubmitHandler<SingupSchemaType> = async (data) => {
+  const onSubmit: SubmitHandler<SingupSchemaType> = async () => {
     console.log(selectedCity);
   };
   return (
