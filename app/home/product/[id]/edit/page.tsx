@@ -10,7 +10,9 @@ export default async function EditPage(props: {
   // const pathname = usePathname();
   // const { replace } = useRouter();
 
-  const products = await fetchProducts();
+  const products = await fetchProducts(
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJhMDA0NzczLTI5ZjYtNGRhMC1hNWNhLTVmMjdiYjRlYTRiNyIsImVtYWlsIjoiZXhhbXBsZUBnbWFpbC5jb20iLCJpYXQiOjE3MzI2MDI0NjIsImV4cCI6MTczMjYwNjA2Mn0.A6nx2pA55FdRGKLAm0OHY6hR3JfiFVeINHB8geSx07M"
+  );
   const params = await props.params;
   const id_find = params.id;
 

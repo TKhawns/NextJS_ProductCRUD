@@ -8,6 +8,11 @@ import { LoginSchemaType } from "../validate_schema/user_schema";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+interface LoginUserGoogle {
+  email: string;
+  password: string;
+}
+
 const FormSchema = z.object({
   product_id: z.string(),
   name: z.string(),
@@ -94,7 +99,6 @@ export async function deleteProduct(product_id: string) {
 }
 
 export async function loginUser(loginData: LoginSchemaType) {
-  console.log("Test apiUrl: ", apiUrl);
   let status = "";
   try {
     const res = await fetch(`${apiUrl}/user/login`, {
@@ -123,8 +127,43 @@ export async function loginUser(loginData: LoginSchemaType) {
     return e as string;
   } finally {
     if (status === "") {
-      // redirect("/home/product");
+      redirect("/home/product");
+    }
+  }
+}
+
+export async function loginUserGoogle(loginData: LoginUserGoogle) {
+  console.log("Test apiUrl: ", apiUrl);
+  let status = "";
+  try {
+    const res = await fetch(`${apiUrl}/user/login-google`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: loginData.email,
+        password: "loginbygoogle",
+      }),
+    });
+
+    const result = await res.json();
+    // if login fail, statusCode have in response, else null.
+    console.log("Test result: ", result);
+    if (result.statusCode) {
+      status = result.statusCode;
+      return result.message;
+    }
+    setAuthCookie(res);
+    return res;
+  } catch (e) {
+    console.log(e);
+    return e as string;
+  } finally {
+    if (status === "") {
       console.log("Test status: ", status);
+      redirect("/home/product");
     }
   }
 }

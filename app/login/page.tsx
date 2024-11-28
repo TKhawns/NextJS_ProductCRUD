@@ -1,56 +1,48 @@
 "use client";
 import Link from "next/link";
 import { loginUser } from "../lib/action";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { LoginSchema, LoginSchemaType } from "../validate_schema/user_schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ToastContainer, toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import "react-toastify/dist/ReactToastify.css";
 import googleIcon from "../../assets/google_icon.png";
+import { useActionState } from "react";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   // React-hook-form to validate the input login data.
   const {
     register,
-    handleSubmit,
     formState: { errors },
   } = useForm<LoginSchemaType>({
     resolver: zodResolver(LoginSchema),
     mode: "all",
   });
 
-  const onSubmit: SubmitHandler<LoginSchemaType> = (data) => {
-    loginMutation(data);
+  const loginHandler = async (_previousState: string, formData: FormData) => {
+    try {
+      const data = {
+        email: formData.get("email") as string,
+        password: formData.get("password") as string,
+      };
+      const response = await loginUser(data);
+      toast.info(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      toast.error("Đăng nhập thất bại!");
+    }
   };
+  const [state, loginAction, isPendding] = useActionState(loginHandler, "null");
 
-  const { mutate: loginMutation, isPending: loginPending } = useMutation({
-    mutationFn: async (data: LoginSchemaType) => {
-      // Server action to login user
-      const result = await loginUser(data);
-      if (!result.id) {
-        throw new Error(result.message);
-      }
-      return result.data;
-    },
-    onError: () => {
-      toast.error("Login failed");
-    },
-    onSuccess: () => {
-      toast.success("Login successful!");
-      router.push("/home/product");
-    },
-  });
-
+  // Login with Google.
   const handleGoogleLogin = async (event: any) => {
     event.preventDefault();
     window.location.href = "http://localhost:8080/google";
   };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form action={loginAction}>
       <ToastContainer position="top-left" autoClose={2000} theme="light" />
       <div className="w-screen flex flex-row">
         <div className="w-1/2 h-screen bg-sky-300">
@@ -88,10 +80,10 @@ export default function LoginPage() {
             <div className="content-start text-sm">Forgot your password?</div>
 
             <button
-              disabled={loginPending}
+              disabled={isPendding}
               className="text-center flex h-10 w-2/3 items-center justify-center rounded-lg bg-blue-500 px-4 text-sm font-bold text-white transition-colors hover:bg-blue-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 active:bg-blue-600 aria-disabled:cursor-not-allowed aria-disabled:opacity-50"
             >
-              {loginPending ? "Logging in..." : "Login"}
+              {isPendding ? "Logging in..." : "Login"}
             </button>
 
             <div className="content-start text-sm flex flex-row gap-6">

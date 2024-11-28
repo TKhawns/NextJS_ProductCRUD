@@ -1,35 +1,40 @@
+"use server";
+
 import { sql } from "@vercel/postgres";
 import { Product } from "./model";
+import { cookies } from "next/headers";
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-export async function fetchProducts(token: string) {
+export async function fetchProducts() {
   console.log("Test apiUrl from products: ", apiUrl);
+  const cookieStore = cookies();
+  const accessToken = (await cookieStore).get("accessToken")?.value as string;
+
   try {
-    const res = await fetch(`${apiUrl}/user/product-list`, {
+    const res = await fetch("http://localhost:8080/user/product-list", {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
       },
     });
-    // const res = await fetch("/api/products", {
-    //   method: "GET",
-    // });
+    console.log("Test response res: ", res);
     const temp = await res.json();
-    console.log(temp);
     return temp;
   } catch (error) {
     console.log(error);
     return [];
   }
 }
-export async function fetchFilterProduct(queryColor: string[], token: string) {
-  const errorData = await fetchProducts(token);
+
+export async function fetchFilterProduct(queryColor: string[]) {
+  const errorData = await fetchProducts();
   if (queryColor.length === 0) {
     return errorData;
   }
   try {
     console.log(JSON.stringify({ colorIds: queryColor }));
+
     const res = await fetch("http://localhost:8080/user/product-filter", {
       method: "POST",
       body: JSON.stringify({ colorIds: queryColor }),
@@ -43,16 +48,14 @@ export async function fetchFilterProduct(queryColor: string[], token: string) {
   }
 }
 
-export async function fetColors(accessToken: string) {
+export async function fetColors() {
+  const cookieStore = cookies();
+  const accessToken = (await cookieStore).get("accessToken")?.value as string;
   try {
-    // const res = await fetch("/api/colors", {
-    //   method: "GET",
-    // });
     const res = await fetch(`${apiUrl}/user/color-list`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
       },
     });
     const temp = await res.json();

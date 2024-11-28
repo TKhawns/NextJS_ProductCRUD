@@ -1,4 +1,25 @@
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Page() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Listen for storage events from other tabs
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "emailVerified" && event.newValue === "true") {
+        router.push("/home/product");
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [router]);
+
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="w-[28rem] p-10 bg-white rounded-2xl shadow-xl border border-indigo-50">

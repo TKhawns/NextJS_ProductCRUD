@@ -8,13 +8,7 @@ interface Color {
   color: string;
 }
 
-export default function Filter({
-  colors,
-  token,
-}: {
-  colors: Color[];
-  token: string;
-}) {
+export default function Filter({ colors }: { colors: Color[] }) {
   // colors parameter here is all list colors from database.
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -43,7 +37,7 @@ export default function Filter({
       .filter(Boolean);
     console.log("Test selectedIds: ", selectedIds);
     // Fetch products by id of colors instead get all products.
-    return fetchProducts(token);
+    return fetchProducts();
   }
 
   function handleFilter(term: string, checked: boolean) {
